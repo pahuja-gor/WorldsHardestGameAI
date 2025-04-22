@@ -1,5 +1,5 @@
 let test;
-let goal;
+let spawn, goal;
 
 let topWallOfSpawn, leftWallOfSpawn, rightWallOfSpawn, bottomWallOfSpawn, 
 horizontalBridgeFromSpawn, verticalBridgeFromSpawn, 
@@ -17,7 +17,6 @@ function setup() {
   createCanvas(1440, 680);
   background(PURPLE_BACKGROUD);
   test = new Population(1000);
-  goal = createVector(400, 10);
 
   // starting/spawn area
   topWallOfSpawn = new Wall(50, 50, SIZE_OF_SQUARE * 3, WALL_THICKNESS);
@@ -31,6 +30,9 @@ function setup() {
 
   bottomWallOfSpawn = new Wall(topWallOfSpawn.getX(), leftWallOfSpawn.getX() + leftWallOfSpawn.getHeight(), SIZE_OF_SQUARE * 5, -WALL_THICKNESS);
   bottomWallOfSpawn.show(...BLACK);
+
+  fill(...GREEN_ZONE);
+  goal = rect(topWallOfSpawn.getX() + WALL_THICKNESS, topWallOfSpawn.getY() + WALL_THICKNESS, SIZE_OF_SQUARE * 3 - 2 * WALL_THICKNESS, SIZE_OF_SQUARE * 7 - 2 * WALL_THICKNESS);
 
   // bridge to obstacle arena
   horizontalBridgeFromSpawn = new Wall(rightWallOfSpawn.getX() + rightWallOfSpawn.getWidth(), rightWallOfSpawn.getY() + rightWallOfSpawn.getHeight() - WALL_THICKNESS, SIZE_OF_SQUARE, WALL_THICKNESS);
@@ -71,6 +73,9 @@ function setup() {
 
   rightWallOfGoal = new Wall(topWallOfGoal.getX() + topWallOfGoal.getWidth() - WALL_THICKNESS, topWallOfGoal.getY() - WALL_THICKNESS, WALL_THICKNESS, leftWallOfSpawn.getHeight());
   rightWallOfGoal.show(...BLACK);
+
+  fill(...GREEN_ZONE);
+  goal = rect(horizontalBridgeToGoal.getX() + horizontalBridgeToGoal.getWidth(), topWallOfGoal.getY() + topWallOfGoal.getHeight() + WALL_THICKNESS, SIZE_OF_SQUARE * 3 - 2 * WALL_THICKNESS, SIZE_OF_SQUARE * 7 - 2 * WALL_THICKNESS);
 }
 
 function draw() {
