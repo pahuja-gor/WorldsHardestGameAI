@@ -6,7 +6,7 @@ class Square {
     this.fitness = 0;
 
     this.brain = new Brain(1000);
-    this.pos = createVector(152.5, 312.5);
+    this.pos = createVector(...SPAWN_POINT);
     this.vel = createVector(0, 0);
     this.acc = createVector(0, 0);
   }
@@ -21,7 +21,7 @@ class Square {
     }
   }
 
-  move() {
+  move(walls) {
     if (this.brain.directions.length > this.brain.step) {
       this.acc = this.brain.directions[this.brain.step];
       this.brain.step++;
@@ -31,7 +31,10 @@ class Square {
 
     this.vel.add(this.acc);
     this.vel.limit(5);
-    this.pos.add(this.vel);
+
+    if (walls.every(wall => !collideRectRect(this.pos.x + this.vel.x, this.pos.y + this.vel.y, 30, 30, wall.getX(), wall.getY(), wall.getWidth(), wall.getHeight()))) {
+      this.pos.add(this.vel);
+    }
   }
 
   // work on keeping squares from going all over the place
@@ -39,19 +42,13 @@ class Square {
   // make sure squares don't go out of the arena/walls
   // change goal.x and y to not be a point but rather a boundary
 
-  update() {
+  update(obstacles, walls) {
     if (!this.isDead && !this.reachedGoal) {
-      this.move();
+      this.move(walls);
 
-      if (this.pos.x < 2 || this.pos.y < 2 || this.pos.x > width - 2 || this.pos.y > height - 2) {
-        this.isDead = true;
-      } else if (dist(this.pos.x, this.pos.y, goal.x, goal.y) < 5) {
+      if (dist(this.pos.x, this.pos.y, goal.x, goal.y) < 5) {
         this.reachedGoal = true;
-      } 
-      else if (this.pos.x > 0 && this.pos.x < 600 && this.pos.y > 300 && this.pos.y < 310) {
-        this.isDead = true;
-      } 
-      else if (this.pos.x > 200 && this.pos.x < 800 && this.pos.y > 500 && this.pos.y < 510) {
+      } else if (obstacles.some(obstacle => this.collision(obstacle))) {
         this.isDead = true;
       }
     }
@@ -64,7 +61,7 @@ class Square {
 
     // Find the closest point to the circle within the rectangle
     let closestX = constrain(cx, this.pos.x, this.pos.x + 30);
-    let closestY = constrain(cy, ry, this.pos.y + 30);
+    let closestY = constrain(cy, this.pos.y, this.pos.y + 30);
   
     // Calculate the distance between the circle's center and this closest point
     let dx = cx - closestX;

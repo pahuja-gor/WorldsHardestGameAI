@@ -19,12 +19,12 @@ class Population {
     this.squares[0].show();
   }
 
-  update() {
+  update(obstacles, walls) {
     for (let i = 0; i < this.squares.length; i++) {
       if (this.squares[i].brain.step > this.minStep) {
         this.squares[i].isDead = true;
       } else {
-        this.squares[i].update();
+        this.squares[i].update(obstacles, walls);
       }
     }
   }

@@ -19,6 +19,8 @@ let topWallOfSpawn,
   bottomWallOfGoal,
   rightWallOfGoal;
 
+const POPULATION_SIZE = 1000;
+const SPAWN_POINT = [152.5, 312.5];
 const WALL_THICKNESS = 10;
 const SIZE_OF_SQUARE = 75;
 const PURPLE_BACKGROUD = [168, 167, 249];
@@ -27,7 +29,7 @@ const BLACK = [0, 0, 0];
 
 function setup() {
   createCanvas(1440, 680);
-  test = new Population(1000);
+  test = new Population(POPULATION_SIZE);
 
   for (let y = 170, index = 0; y < 500 && index < 5; y += 70, index++) {
     if (index % 2 == 0) {
@@ -201,20 +203,29 @@ function draw() {
     SIZE_OF_SQUARE * 7 - 2 * WALL_THICKNESS
   );
 
-  // fill(255, 0, 0);
-  // rect(
-  //   topWallOfSpawn.getX() + topWallOfSpawn.getWidth() / 2 - WALL_THICKNESS,
-  //   topWallOfSpawn.getY() + leftWallOfSpawn.getHeight() / 2,
-  //   WALL_THICKNESS * 3,
-  //   WALL_THICKNESS * 3
-  // );
+  let walls = [topWallOfSpawn,
+    leftWallOfSpawn,
+    rightWallOfSpawn,
+    bottomWallOfSpawn,
+    horizontalBridgeFromSpawn,
+    verticalBridgeFromSpawn,
+    leftWallOfObstacleArena,
+    topWallOfObstacleArena,
+    bottomWallOfObstacleArena,
+    rightWallOfObstacleArena,
+    verticalBridgeToGoal,
+    horizontalBridgeToGoal,
+    topWallOfGoal,
+    leftWallOfGoal,
+    bottomWallOfGoal,
+    rightWallOfGoal];
 
   if (test.areAllSquaresDead()) {
     test.calculateFitness();
     test.naturalSelection();
     test.mutateChildren();
   } else {
-    test.update();
+    test.update(obstacles, walls);
     test.show();
   }
 }
