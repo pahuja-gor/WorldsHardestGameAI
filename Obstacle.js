@@ -21,8 +21,6 @@ class Obstacle {
         }
         this.x += this.vel;
         this.pos.add(this.vel);
-        console.log('pos:' + this.pos);
-        console.log('vel:' + this.vel);
     }
 
     getCenterX() {
