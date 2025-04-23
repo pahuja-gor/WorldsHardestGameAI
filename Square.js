@@ -1,4 +1,4 @@
-class Dot {
+class Square {
   constructor() {
     this.isDead = false;
     this.reachedGoal = false;
@@ -6,7 +6,7 @@ class Dot {
     this.fitness = 0;
 
     this.brain = new Brain(1000);
-    this.pos = createVector(width / 2, height - 10);
+    this.pos = createVector(152.5, 312.5);
     this.vel = createVector(0, 0);
     this.acc = createVector(0, 0);
   }
@@ -14,10 +14,10 @@ class Dot {
   show() {
     if (this.isBest) {
       fill(0, 255, 0);
-      ellipse(this.pos.x, this.pos.y, 8, 8);
+      square(this.pos.x, this.pos.y, 30);
     } else {
-      fill(0);
-      ellipse(this.pos.x, this.pos.y, 4, 4);
+      fill(255, 0, 0);
+      square(this.pos.x, this.pos.y, 30);
     }
   }
 
@@ -33,6 +33,11 @@ class Dot {
     this.vel.limit(5);
     this.pos.add(this.vel);
   }
+
+  // work on keeping squares from going all over the place
+  // add a feature that marks isDead as true if the square hits one of the blue obstacles
+  // make sure squares don't go out of the arena/walls
+  // change goal.x and y to not be a point but rather a boundary
 
   update() {
     if (!this.isDead && !this.reachedGoal) {
@@ -52,6 +57,24 @@ class Dot {
     }
   }
 
+  collision(obstacle) {
+    let cx = obstacle.getCenterX();
+    let cy = obstacle.getCenterY();
+    let radius = obstacle.getRadius();
+
+    // Find the closest point to the circle within the rectangle
+    let closestX = constrain(cx, this.pos.x, this.pos.x + 30);
+    let closestY = constrain(cy, ry, this.pos.y + 30);
+  
+    // Calculate the distance between the circle's center and this closest point
+    let dx = cx - closestX;
+    let dy = cy - closestY;
+  
+    // If the distance is less than the circle's radius, there's a collision
+    return (dx * dx + dy * dy) < (radius * radius);
+  }
+  
+
   calculateFitness() {
     if (this.reachedGoal) {
       this.fitness = 1.0 / 16.0 + 10000.0 / float(this.brain.step * this.brain.step);
@@ -62,7 +85,7 @@ class Dot {
   }
 
   retrieveChild() {
-    let child = new Dot();
+    let child = new Square();
     child.brain = this.brain.clone();
 
     return child;

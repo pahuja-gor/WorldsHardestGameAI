@@ -1,43 +1,43 @@
 class Population {
   constructor(size) {
-    this.dots = new Array(size);
+    this.squares = new Array(size);
 
     for (let i = 0; i < size; i++) {
-      this.dots[i] = new Dot();
+      this.squares[i] = new Square();
     }
-    
+
     this.fitnessSum = 0.0;
     this.gen = 1;
-    this.bestDot = 0;
+    this.bestSquare = 0;
     this.minStep = 1000;
   }
 
   show() {
-    for (let i = 1; i < this.dots.length; i++) {
-      this.dots[i].show();
+    for (let i = 1; i < this.squares.length; i++) {
+      this.squares[i].show();
     }
-    this.dots[0].show();
+    this.squares[0].show();
   }
 
   update() {
-    for (let i = 0; i < this.dots.length; i++) {
-      if (this.dots[i].brain.step > this.minStep) {
-        this.dots[i].isDead = true;
+    for (let i = 0; i < this.squares.length; i++) {
+      if (this.squares[i].brain.step > this.minStep) {
+        this.squares[i].isDead = true;
       } else {
-        this.dots[i].update();
+        this.squares[i].update();
       }
     }
   }
 
   calculateFitness() {
-    for (let i = 0; i < this.dots.length; i++) {
-      this.dots[i].calculateFitness();
+    for (let i = 0; i < this.squares.length; i++) {
+      this.squares[i].calculateFitness();
     }
   }
 
-  areAllDotsDead() {
-    for (let i = 0; i < this.dots.length; i++) {
-      if (!this.dots[i].isDead && !this.dots[i].reachedGoal) {
+  areAllSquaresDead() {
+    for (let i = 0; i < this.squares.length; i++) {
+      if (!this.squares[i].isDead && !this.squares[i].reachedGoal) {
         return false;
       }
     }
@@ -45,29 +45,29 @@ class Population {
   }
 
   naturalSelection() {
-    let newDots = new Array(this.dots.length);
-    this.setBestDot();
+    let newSquares = new Array(this.squares.length);
+    this.setBestSquare();
     this.calculateFitnessSum();
 
-    newDots[0] = this.dots[this.bestDot].retrieveChild();
-    newDots[0].isBest = true;
+    newSquares[0] = this.squares[this.bestSquare].retrieveChild();
+    newSquares[0].isBest = true;
 
-    for (let i = 1; i < newDots.length; i++) {
+    for (let i = 1; i < newSquares.length; i++) {
       // select parent based on fitness
       let parent = this.selectFitParent();
 
       // get the fit parent's child
-      newDots[i] = parent.retrieveChild();
+      newSquares[i] = parent.retrieveChild();
     }
 
-    this.dots = [...newDots];
+    this.squares = [...newSquares];
     this.gen++;
   }
 
   calculateFitnessSum() {
     this.fitnessSum = 0;
-    for (let i = 0; i < this.dots.length; i++) {
-      this.fitnessSum += this.dots[i].fitness;
+    for (let i = 0; i < this.squares.length; i++) {
+      this.fitnessSum += this.squares[i].fitness;
     }
   }
 
@@ -75,36 +75,36 @@ class Population {
     let rand = random(this.fitnessSum);
     let runningSum = 0;
 
-    for (let i = 0; i < this.dots.length; i++) {
-      runningSum += this.dots[i].fitness;
+    for (let i = 0; i < this.squares.length; i++) {
+      runningSum += this.squares[i].fitness;
       if (runningSum > rand) {
-        return this.dots[i];
+        return this.squares[i];
       }
     }
     return null;
   }
 
   mutateChildren() {
-    for (let i = 1; i < this.dots.length; i++) {
-      this.dots[i].brain.mutate();
+    for (let i = 1; i < this.squares.length; i++) {
+      this.squares[i].brain.mutate();
     }
   }
 
-  setBestDot() {
+  setBestSquare() {
     let max = 0;
     let maxIndex = 0;
 
-    for (let i = 0; i < this.dots.length; i++) {
-      if (this.dots[i].fitness > max) {
-        max = this.dots[i].fitness;
+    for (let i = 0; i < this.squares.length; i++) {
+      if (this.squares[i].fitness > max) {
+        max = this.squares[i].fitness;
         maxIndex = i;
       }
     }
 
-    this.bestDot = maxIndex;
+    this.bestSquare = maxIndex;
 
-    if (this.dots[this.bestDot].reachedGoal) {
-      this.minStep = this.dots[this.bestDot].brain.step;
+    if (this.squares[this.bestSquare].reachedGoal) {
+      this.minStep = this.squares[this.bestSquare].brain.step;
     }
   }
 }
