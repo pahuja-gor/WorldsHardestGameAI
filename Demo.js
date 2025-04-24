@@ -59,23 +59,23 @@ function draw() {
   leftWallOfSpawn.show(...BLACK);
 
   rightWallOfSpawn = new Wall(
-    topWallOfSpawn.getX() + topWallOfSpawn.getWidth(),
+    topWallOfSpawn.getX() + topWallOfSpawn.getWidth() - WALL_THICKNESS,
     topWallOfSpawn.getY(),
-    -WALL_THICKNESS,
+    WALL_THICKNESS,
     SIZE_OF_SQUARE * 6
   );
   rightWallOfSpawn.show(...BLACK);
 
   bottomWallOfSpawn = new Wall(
     topWallOfSpawn.getX(),
-    leftWallOfSpawn.getX() + leftWallOfSpawn.getHeight(),
+    leftWallOfSpawn.getY() + leftWallOfSpawn.getHeight() - WALL_THICKNESS,
     SIZE_OF_SQUARE * 5,
-    -WALL_THICKNESS
+    WALL_THICKNESS
   );
   bottomWallOfSpawn.show(...BLACK);
 
   fill(...GREEN_ZONE);
-  goal = rect(
+  spawn = rect(
     topWallOfSpawn.getX() + WALL_THICKNESS,
     topWallOfSpawn.getY() + WALL_THICKNESS,
     SIZE_OF_SQUARE * 3 - 2 * WALL_THICKNESS,
@@ -84,7 +84,7 @@ function draw() {
 
   // bridge to obstacle arena
   horizontalBridgeFromSpawn = new Wall(
-    rightWallOfSpawn.getX() + rightWallOfSpawn.getWidth(),
+    rightWallOfSpawn.getX(),
     rightWallOfSpawn.getY() + rightWallOfSpawn.getHeight() - WALL_THICKNESS,
     SIZE_OF_SQUARE,
     WALL_THICKNESS
@@ -92,45 +92,43 @@ function draw() {
   horizontalBridgeFromSpawn.show(...BLACK);
 
   verticalBridgeFromSpawn = new Wall(
-    bottomWallOfSpawn.getX() + bottomWallOfSpawn.getWidth(),
-    bottomWallOfSpawn.getY(),
-    -WALL_THICKNESS,
-    -(SIZE_OF_SQUARE + WALL_THICKNESS)
+    bottomWallOfSpawn.getX() + bottomWallOfSpawn.getWidth() - WALL_THICKNESS,
+    bottomWallOfSpawn.getY() - (SIZE_OF_SQUARE + WALL_THICKNESS),
+    WALL_THICKNESS,
+    (SIZE_OF_SQUARE + WALL_THICKNESS)
   );
   verticalBridgeFromSpawn.show(...BLACK);
 
   // obstacle arena
   leftWallOfObstacleArena = new Wall(
-    horizontalBridgeFromSpawn.getX() + horizontalBridgeFromSpawn.getWidth(),
-    rightWallOfSpawn.getY() + rightWallOfSpawn.getHeight(),
+    horizontalBridgeFromSpawn.getX() + horizontalBridgeFromSpawn.getWidth() - WALL_THICKNESS,
+    rightWallOfSpawn.getY() + rightWallOfSpawn.getHeight() - SIZE_OF_SQUARE * 5,
     rightWallOfSpawn.getWidth(),
-    -SIZE_OF_SQUARE * 5
+    SIZE_OF_SQUARE * 5
   );
   leftWallOfObstacleArena.show(...BLACK);
 
   topWallOfObstacleArena = new Wall(
-    leftWallOfObstacleArena.getX() - leftWallOfSpawn.getWidth(),
-    leftWallOfObstacleArena.getY() + leftWallOfObstacleArena.getHeight(),
+    leftWallOfObstacleArena.getX(),
+    leftWallOfObstacleArena.getY(),
     SIZE_OF_SQUARE * 7,
     WALL_THICKNESS
   );
   topWallOfObstacleArena.show(...BLACK);
 
   bottomWallOfObstacleArena = new Wall(
-    bottomWallOfSpawn.getX() + bottomWallOfSpawn.getWidth() - WALL_THICKNESS,
-    bottomWallOfSpawn.getY() + verticalBridgeFromSpawn.getHeight(),
+    verticalBridgeFromSpawn.getX(),
+    verticalBridgeFromSpawn.getY(),
     SIZE_OF_SQUARE * 7,
     WALL_THICKNESS
   );
   bottomWallOfObstacleArena.show(...BLACK);
 
   rightWallOfObstacleArena = new Wall(
-    bottomWallOfObstacleArena.getX() +
-      bottomWallOfObstacleArena.getWidth() -
-      WALL_THICKNESS,
-    bottomWallOfObstacleArena.getY() + WALL_THICKNESS,
+    topWallOfObstacleArena.getX() + topWallOfObstacleArena.getWidth() + SIZE_OF_SQUARE,
+    topWallOfObstacleArena.getY() - WALL_THICKNESS,
     WALL_THICKNESS,
-    -SIZE_OF_SQUARE * 5
+    SIZE_OF_SQUARE * 5
   );
   rightWallOfObstacleArena.show(...BLACK);
 
@@ -141,16 +139,16 @@ function draw() {
 
   // bridge to goal
   verticalBridgeToGoal = new Wall(
-    topWallOfObstacleArena.getX() + topWallOfObstacleArena.getWidth(),
-    topWallOfObstacleArena.getY() + WALL_THICKNESS,
-    -WALL_THICKNESS,
-    -(SIZE_OF_SQUARE + WALL_THICKNESS)
+    topWallOfObstacleArena.getX() + topWallOfObstacleArena.getWidth() - WALL_THICKNESS,
+    topWallOfObstacleArena.getY() - SIZE_OF_SQUARE,
+    WALL_THICKNESS,
+    SIZE_OF_SQUARE
   );
   verticalBridgeToGoal.show(...BLACK);
 
   horizontalBridgeToGoal = new Wall(
     rightWallOfObstacleArena.getX(),
-    rightWallOfObstacleArena.getY() + rightWallOfObstacleArena.getHeight(),
+    rightWallOfObstacleArena.getY(),
     horizontalBridgeFromSpawn.getWidth(),
     horizontalBridgeFromSpawn.getHeight()
   );
@@ -158,22 +156,16 @@ function draw() {
 
   // goal area
   topWallOfGoal = new Wall(
-    verticalBridgeToGoal.getX() - WALL_THICKNESS,
-    verticalBridgeToGoal.getY() +
-      verticalBridgeToGoal.getHeight() +
-      WALL_THICKNESS,
+    verticalBridgeToGoal.getX(),
+    verticalBridgeToGoal.getY(),
     bottomWallOfSpawn.getWidth(),
     bottomWallOfSpawn.getHeight()
   );
   topWallOfGoal.show(...BLACK);
 
   leftWallOfGoal = new Wall(
-    horizontalBridgeToGoal.getX() +
-      horizontalBridgeToGoal.getWidth() -
-      WALL_THICKNESS,
-    horizontalBridgeToGoal.getY() +
-      horizontalBridgeToGoal.getHeight() -
-      WALL_THICKNESS,
+    rightWallOfObstacleArena.getX() + SIZE_OF_SQUARE,
+    rightWallOfObstacleArena.getY(),
     WALL_THICKNESS,
     rightWallOfSpawn.getHeight()
   );
@@ -181,15 +173,15 @@ function draw() {
 
   bottomWallOfGoal = new Wall(
     leftWallOfGoal.getX(),
-    leftWallOfGoal.getY() + leftWallOfGoal.getHeight() - WALL_THICKNESS,
+    bottomWallOfSpawn.getY(),
     topWallOfSpawn.getWidth(),
     WALL_THICKNESS
   );
   bottomWallOfGoal.show(...BLACK);
 
   rightWallOfGoal = new Wall(
-    topWallOfGoal.getX() + topWallOfGoal.getWidth() - WALL_THICKNESS,
-    topWallOfGoal.getY() - WALL_THICKNESS,
+    topWallOfGoal.getX() + topWallOfGoal.getWidth(),
+    topWallOfGoal.getY(),
     WALL_THICKNESS,
     leftWallOfSpawn.getHeight()
   );
@@ -197,8 +189,8 @@ function draw() {
 
   fill(...GREEN_ZONE);
   goal = rect(
-    horizontalBridgeToGoal.getX() + horizontalBridgeToGoal.getWidth(),
-    topWallOfGoal.getY() + topWallOfGoal.getHeight() + WALL_THICKNESS,
+    leftWallOfGoal.getX() + leftWallOfGoal.getWidth(),
+    leftWallOfGoal.getY() - SIZE_OF_SQUARE + 2 * WALL_THICKNESS,
     SIZE_OF_SQUARE * 3 - 2 * WALL_THICKNESS,
     SIZE_OF_SQUARE * 7 - 2 * WALL_THICKNESS
   );
