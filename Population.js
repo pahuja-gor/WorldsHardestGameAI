@@ -1,9 +1,9 @@
 class Population {
-  constructor(size) {
+  constructor(size, initialMoves, initialAlpha) {
     this.squares = new Array(size);
 
     for (let i = 0; i < size; i++) {
-      this.squares[i] = new Square();
+      this.squares[i] = new Square(initialMoves, initialAlpha);
     }
 
     this.fitnessSum = 0.0;
@@ -105,6 +105,14 @@ class Population {
 
     if (this.squares[this.bestSquare].reachedGoal) {
       this.minStep = this.squares[this.bestSquare].brain.step;
+    }
+  }
+
+  increaseMovesForAllSquares(increment) {
+    if (this.squares[0].brain.directions.length < 120 && !this.reachedGoal) {
+      for (let i = 0; i < this.squares.length; i++) {
+        this.squares[i].brain.increaseMoves(increment);
+      }
     }
   }
 }

@@ -2,6 +2,16 @@ let test;
 let spawn, goal;
 let obstacles = new Array(5);
 
+// coin1 (377.5, 495)
+// coin2 (892.5, 130)
+// coin3 (1015, 87.5)
+// coin4 (1117.5, 312.5)
+
+// let goal_xcoors = [377.5, 892.5, 1015, 1117.5];
+// let goal_ycoors = [495, 130, 87.5, 312.5];
+let goal_x = 1117.5;
+let goal_y = 312.5;
+
 let topWallOfSpawn,
   leftWallOfSpawn,
   rightWallOfSpawn,
@@ -29,7 +39,7 @@ const BLACK = [0, 0, 0];
 
 function setup() {
   createCanvas(1440, 680);
-  test = new Population(POPULATION_SIZE);
+  test = new Population(POPULATION_SIZE, 10, 255);
 
   for (let y = 170, index = 0; y < 500 && index < 5; y += 70, index++) {
     if (index % 2 == 0) {
@@ -45,6 +55,7 @@ function draw() {
   fill(0);
   textSize(24);
   text("Generation: " + str(test.gen), 10, 20);
+  text("Moves: " + str(test.squares[0].brain.directions.length), 10, 44);
 
   // starting/spawn area
   topWallOfSpawn = new Wall(50, 50, SIZE_OF_SQUARE * 3, WALL_THICKNESS);
@@ -93,15 +104,17 @@ function draw() {
 
   verticalBridgeFromSpawn = new Wall(
     bottomWallOfSpawn.getX() + bottomWallOfSpawn.getWidth() - WALL_THICKNESS,
-    bottomWallOfSpawn.getY() - (SIZE_OF_SQUARE + WALL_THICKNESS),
+    bottomWallOfSpawn.getY() - SIZE_OF_SQUARE,
     WALL_THICKNESS,
-    (SIZE_OF_SQUARE + WALL_THICKNESS)
+    SIZE_OF_SQUARE + WALL_THICKNESS
   );
   verticalBridgeFromSpawn.show(...BLACK);
 
   // obstacle arena
   leftWallOfObstacleArena = new Wall(
-    horizontalBridgeFromSpawn.getX() + horizontalBridgeFromSpawn.getWidth() - WALL_THICKNESS,
+    horizontalBridgeFromSpawn.getX() +
+      horizontalBridgeFromSpawn.getWidth() -
+      WALL_THICKNESS,
     rightWallOfSpawn.getY() + rightWallOfSpawn.getHeight() - SIZE_OF_SQUARE * 5,
     rightWallOfSpawn.getWidth(),
     SIZE_OF_SQUARE * 5
@@ -111,7 +124,7 @@ function draw() {
   topWallOfObstacleArena = new Wall(
     leftWallOfObstacleArena.getX(),
     leftWallOfObstacleArena.getY(),
-    SIZE_OF_SQUARE * 7,
+    leftWallOfSpawn.getHeight(),
     WALL_THICKNESS
   );
   topWallOfObstacleArena.show(...BLACK);
@@ -119,16 +132,18 @@ function draw() {
   bottomWallOfObstacleArena = new Wall(
     verticalBridgeFromSpawn.getX(),
     verticalBridgeFromSpawn.getY(),
-    SIZE_OF_SQUARE * 7,
+    topWallOfObstacleArena.getWidth(),
     WALL_THICKNESS
   );
   bottomWallOfObstacleArena.show(...BLACK);
 
   rightWallOfObstacleArena = new Wall(
-    topWallOfObstacleArena.getX() + topWallOfObstacleArena.getWidth() + SIZE_OF_SQUARE,
-    topWallOfObstacleArena.getY() - WALL_THICKNESS,
+    topWallOfObstacleArena.getX() +
+      topWallOfObstacleArena.getWidth() +
+      SIZE_OF_SQUARE,
+    topWallOfObstacleArena.getY(),
     WALL_THICKNESS,
-    SIZE_OF_SQUARE * 5
+    leftWallOfObstacleArena.getHeight()
   );
   rightWallOfObstacleArena.show(...BLACK);
 
@@ -139,17 +154,19 @@ function draw() {
 
   // bridge to goal
   verticalBridgeToGoal = new Wall(
-    topWallOfObstacleArena.getX() + topWallOfObstacleArena.getWidth() - WALL_THICKNESS,
+    topWallOfObstacleArena.getX() +
+      topWallOfObstacleArena.getWidth() -
+      WALL_THICKNESS,
     topWallOfObstacleArena.getY() - SIZE_OF_SQUARE,
-    WALL_THICKNESS,
-    SIZE_OF_SQUARE
+    verticalBridgeFromSpawn.getWidth(),
+    verticalBridgeFromSpawn.getHeight()
   );
   verticalBridgeToGoal.show(...BLACK);
 
   horizontalBridgeToGoal = new Wall(
     rightWallOfObstacleArena.getX(),
     rightWallOfObstacleArena.getY(),
-    horizontalBridgeFromSpawn.getWidth(),
+    horizontalBridgeFromSpawn.getWidth() + WALL_THICKNESS,
     horizontalBridgeFromSpawn.getHeight()
   );
   horizontalBridgeToGoal.show(...BLACK);
@@ -158,7 +175,7 @@ function draw() {
   topWallOfGoal = new Wall(
     verticalBridgeToGoal.getX(),
     verticalBridgeToGoal.getY(),
-    bottomWallOfSpawn.getWidth(),
+    bottomWallOfSpawn.getWidth() + WALL_THICKNESS,
     bottomWallOfSpawn.getHeight()
   );
   topWallOfGoal.show(...BLACK);
@@ -166,7 +183,7 @@ function draw() {
   leftWallOfGoal = new Wall(
     rightWallOfObstacleArena.getX() + SIZE_OF_SQUARE,
     rightWallOfObstacleArena.getY(),
-    WALL_THICKNESS,
+    rightWallOfSpawn.getWidth(),
     rightWallOfSpawn.getHeight()
   );
   leftWallOfGoal.show(...BLACK);
@@ -175,14 +192,14 @@ function draw() {
     leftWallOfGoal.getX(),
     bottomWallOfSpawn.getY(),
     topWallOfSpawn.getWidth(),
-    WALL_THICKNESS
+    topWallOfSpawn.getHeight()
   );
   bottomWallOfGoal.show(...BLACK);
 
   rightWallOfGoal = new Wall(
-    topWallOfGoal.getX() + topWallOfGoal.getWidth(),
+    topWallOfGoal.getX() + topWallOfGoal.getWidth() - WALL_THICKNESS,
     topWallOfGoal.getY(),
-    WALL_THICKNESS,
+    leftWallOfSpawn.getWidth(),
     leftWallOfSpawn.getHeight()
   );
   rightWallOfGoal.show(...BLACK);
@@ -190,12 +207,13 @@ function draw() {
   fill(...GREEN_ZONE);
   goal = rect(
     leftWallOfGoal.getX() + leftWallOfGoal.getWidth(),
-    leftWallOfGoal.getY() - SIZE_OF_SQUARE + 2 * WALL_THICKNESS,
+    leftWallOfGoal.getY() - SIZE_OF_SQUARE + WALL_THICKNESS,
     SIZE_OF_SQUARE * 3 - 2 * WALL_THICKNESS,
     SIZE_OF_SQUARE * 7 - 2 * WALL_THICKNESS
   );
 
-  let walls = [topWallOfSpawn,
+  let walls = [
+    topWallOfSpawn,
     leftWallOfSpawn,
     rightWallOfSpawn,
     bottomWallOfSpawn,
@@ -210,14 +228,20 @@ function draw() {
     topWallOfGoal,
     leftWallOfGoal,
     bottomWallOfGoal,
-    rightWallOfGoal];
+    rightWallOfGoal,
+  ];
 
   if (test.areAllSquaresDead()) {
     test.calculateFitness();
     test.naturalSelection();
     test.mutateChildren();
+
+    if (test.gen % 5 == 0) {
+      test.increaseMovesForAllSquares(5);
+    }
   } else {
     test.update(obstacles, walls);
     test.show();
+    // test.showOnlyBestDot();
   }
 }
